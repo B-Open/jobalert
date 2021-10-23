@@ -16,7 +16,7 @@ namespace Worker
             // setting the keyword
             scraper.Keyword = "programmer";
 
-            List<Job> jobs = await scraper.scrape();
+            List<Job> jobs = await scraper.Scrape();
 
             // Just to check the scraped job 
             foreach (var job in jobs)

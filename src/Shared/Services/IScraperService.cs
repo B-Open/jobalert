@@ -9,10 +9,10 @@ namespace Shared.Services
 
         string Keyword { get; set; }
 
-        IScraperService setKeyword(string keyword);
+        string GetProviderName();
 
+        Task<List<Job>> Scrape();
 
-        Task<List<Job>> scrape();
 
     }
 }

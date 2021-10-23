@@ -28,9 +28,10 @@ namespace Api.Controllers
             
             ScraperServiceFactory factory = new ScraperServiceFactory();
             
+            //TODO: prevent re-instatiating scraper object every request
             factory.ScraperProvider = "jobcenter";
 
-            IScraperService scraper = factory.build();
+            IScraperService scraper = factory.Build();
 
             if (search != null)
             {
@@ -38,7 +39,7 @@ namespace Api.Controllers
                 scraper.Keyword = search;
             } 
 
-            List<Job> scrapedJobs = await scraper.scrape();
+            List<Job> scrapedJobs = await scraper.Scrape();
 
             return scrapedJobs;
         }

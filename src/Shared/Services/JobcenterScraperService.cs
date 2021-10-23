@@ -17,14 +17,12 @@ namespace Shared.Services
 
         public string Keyword { get; set; }
 
-        public IScraperService setKeyword(string keyword)
+        public string GetProviderName()
         {
-            this.Keyword = keyword;
-            return this;
+            return "jobcenter";
         }
 
-
-        public async Task<List<Job>> scrape()
+        public async Task<List<Job>> Scrape()
         {
             var htmlDoc = new HtmlDocument();
             string content = await this.fetchWebsite();
@@ -73,7 +71,8 @@ namespace Shared.Services
             
             string url = "https://jobcentrebrunei.gov.bn/web/guest/search-job";
 
-            if (this.Keyword != "") {
+            if (!String.IsNullOrWhiteSpace(this.Keyword))
+            {
                 url = $"{url}?q={this.Keyword}";
             }
             
