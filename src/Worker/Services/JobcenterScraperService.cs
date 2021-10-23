@@ -15,6 +15,15 @@ namespace Worker.Services
     class JobcenterScraperService
     {
 
+        private string _keyword = "";
+
+        public JobcenterScraperService setKeyword(string keyword)
+        {
+            this._keyword = keyword;
+            return this;
+        }
+
+
         public async Task<List<Job>> scrape()
         {
             var htmlDoc = new HtmlDocument();
@@ -62,7 +71,11 @@ namespace Worker.Services
         {
             using var httpClient = new HttpClient();
             
-            string url = "https://jobcentrebrunei.gov.bn/web/guest/search-job?q=programmer";
+            string url = "https://jobcentrebrunei.gov.bn/web/guest/search-job";
+
+            if (this._keyword != "") {
+                url = $"{url}?q={this._keyword}";
+            }
             
             HttpResponseMessage response = await httpClient.GetAsync(url);
 
