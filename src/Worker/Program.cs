@@ -14,7 +14,7 @@ namespace Worker
             JobcenterScraperService scraper = new JobcenterScraperService();
 
             // setting the keyword
-            scraper.setKeyword("programmer");
+            scraper.Keyword = "programmer";
 
             List<Job> jobs = await scraper.scrape();
 

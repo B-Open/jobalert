@@ -15,11 +15,11 @@ namespace Shared.Services
     public class JobcenterScraperService
     {
 
-        private string _keyword = "";
+        public string Keyword { get; set; }
 
         public JobcenterScraperService setKeyword(string keyword)
         {
-            this._keyword = keyword;
+            this.Keyword = keyword;
             return this;
         }
 
@@ -73,8 +73,8 @@ namespace Shared.Services
             
             string url = "https://jobcentrebrunei.gov.bn/web/guest/search-job";
 
-            if (this._keyword != "") {
-                url = $"{url}?q={this._keyword}";
+            if (this.Keyword != "") {
+                url = $"{url}?q={this.Keyword}";
             }
             
             HttpResponseMessage response = await httpClient.GetAsync(url);

@@ -12,17 +12,17 @@ namespace Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class JobsearchController : ControllerBase
+    public class JobController : ControllerBase
     {
-        private readonly ILogger<JobsearchController> _logger;
+        private readonly ILogger<JobController> _logger;
 
-        public JobsearchController(ILogger<JobsearchController> logger)
+        public JobController(ILogger<JobController> logger)
         {
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<Job>> Get([FromQuery(Name = "search")] string search = "")
+        [HttpGet("{search}")]
+        public async Task<IEnumerable<Job>> Get(string search = "")
         {
             _logger.LogInformation("jobsearch API invoked");
             JobcenterScraperService scraper = new JobcenterScraperService();
@@ -30,7 +30,7 @@ namespace Api.Controllers
             if (search != "")
             {
                 _logger.LogInformation($"Searched keyword {search}");
-                scraper.setKeyword(search);
+                scraper.Keyword = search;
             } 
 
             List<Job> scrapedJobs = await scraper.scrape();
