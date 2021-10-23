@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Shared.Services
 {
-    public class JobcenterScraperService
+    public class JobcenterScraperService: IScraperService
     {
 
         public string Keyword { get; set; }
 
-        public JobcenterScraperService setKeyword(string keyword)
+        public IScraperService setKeyword(string keyword)
         {
             this.Keyword = keyword;
             return this;

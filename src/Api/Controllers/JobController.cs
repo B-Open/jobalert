@@ -21,13 +21,18 @@ namespace Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{search}")]
-        public async Task<IEnumerable<Job>> Get(string search = "")
+        [HttpGet("{search?}")]
+        public async Task<IEnumerable<Job>> Get(string search = null)
         {
             _logger.LogInformation("jobsearch API invoked");
-            JobcenterScraperService scraper = new JobcenterScraperService();
+            
+            ScraperServiceFactory factory = new ScraperServiceFactory();
+            
+            factory.ScraperProvider = "jobcenter";
 
-            if (search != "")
+            IScraperService scraper = factory.build();
+
+            if (search != null)
             {
                 _logger.LogInformation($"Searched keyword {search}");
                 scraper.Keyword = search;
