@@ -1,4 +1,4 @@
-using Shared;
+using Shared.Models;
 using System;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -10,9 +10,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Worker.Services
+namespace Shared.Services
 {
-    class JobcenterScraperService
+    public class JobcenterScraperService
     {
 
         private string _keyword = "";

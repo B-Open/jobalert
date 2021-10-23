@@ -1,8 +1,8 @@
-﻿using Shared;
+﻿using Shared.Models;
+using Shared.Services;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using Worker.Services;
 using Newtonsoft.Json;
 
 namespace Worker
