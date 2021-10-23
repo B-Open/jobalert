@@ -17,6 +17,8 @@ namespace Shared.Services
 
         public string Keyword { get; set; }
 
+        private string _jobcenterUrl = "https://jobcentrebrunei.gov.bn";
+
         public string GetProviderName()
         {
             return "jobcenter";
@@ -42,12 +44,16 @@ namespace Shared.Services
 
                 var salary = lis[0].InnerText;
 
-                var location_li = lis[1];
+                var locationLi = lis[1];
 
-                var location = location_li.InnerText.Replace("&nbsp; ", "");
+                var location = locationLi.InnerText.Replace("&nbsp; ", "");
+
+                var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont a").Attributes["href"].Value;
+
+                jobUrl = $"{this._jobcenterUrl}{jobUrl}";
 
                 // need to go to each of the job and scraped its content
-                var jobDescription = "";
+                var jobDescription = await this.scrapeJobDescription(jobUrl);
 
                 Job job = new Job {
                     Name = name,
@@ -65,24 +71,52 @@ namespace Shared.Services
         }
 
 
-        private async Task<string> fetchWebsite()
+        private async Task<string> fetchWebsite(string url = null)
         {
             using var httpClient = new HttpClient();
-            
-            string url = "https://jobcentrebrunei.gov.bn/web/guest/search-job";
 
-            if (!String.IsNullOrWhiteSpace(this.Keyword))
+            if (String.IsNullOrWhiteSpace(url))
             {
-                url = $"{url}?q={this.Keyword}";
+                url = $"{this._jobcenterUrl}/web/guest/search-job";
+
+                if (!String.IsNullOrWhiteSpace(this.Keyword))
+                {
+                    url = $"{url}?q={this.Keyword}";
+                }
             }
+            
             
             HttpResponseMessage response = await httpClient.GetAsync(url);
 
-            var code = response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
             string htmlContent = await response.Content.ReadAsStringAsync(); 
 
             return htmlContent;
+        }
+
+        private async Task<string> scrapeJobDescription(string jobUrl)
+        {
+            var jobPosting = new HtmlDocument();
+            string content = await this.fetchWebsite(jobUrl);
+            jobPosting.LoadHtml(content);
+
+            var jobDescriptionNode = jobPosting.QuerySelector(".job-viewer-wrapper-content");
+            jobDescriptionNode.QuerySelector(".job-title").Remove();
+            jobDescriptionNode.QuerySelector(".jp_job_res .other-details").Remove();
+
+            // remove all the unnecessary classes and styles
+            foreach(var eachNode in jobDescriptionNode.Descendants().Where(x => x.NodeType == HtmlNodeType.Element))
+            {
+                eachNode.Attributes.RemoveAll();
+            }
+
+            string jobDescription = jobDescriptionNode.InnerHtml;
+
+            // we can do above or
+            // string jobDescription = jobDescriptionNode.InnerText;
+
+            return jobDescription;
         }
     }
 }
