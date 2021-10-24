@@ -11,13 +11,32 @@ services:
     entrypoint: ["dotnet", "Worker.dll"]
     depends_on:
       - "db"
+  
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - './migrations:/migrations'
+    command: ["-path", "/migrations", "-database",  "mysql://root:${DB_PASSWORD}@tcp(db:${DB_PORT})/${DB_DATABASE}", "up"]
+    depends_on: 
+      - "db"
+    profiles:
+      - migrate
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080
+
   db:
     image: mysql:8.0
+    ports:
+      - "${DB_PORT:-3306}:3306"
     volumes:
       - "jobalert_db:/var/lib/mysql"
     restart: always
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: "jobalert"
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
+      MYSQL_DATABASE: '${DB_DATABASE:-jobalert}'
 volumes:
   jobalert_db:
