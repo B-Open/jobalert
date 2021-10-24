@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS job (
     salary_max DECIMAL(8, 2) NOT NULL COMMENT 'The maximum salary in the salary range.',
     location TEXT NOT NULL COMMENT 'The job location details stored as JSON.',
     description TEXT NOT NULL COMMENT 'The job description.',
-    KEY `idx_provider_job_id` (`provider_job_id`)
+    KEY `idx_provider_job_id` (`provider_job_id`),
+    KEY `idx_company_id` (`company_id`)
 ) ENGINE=INNODB COMMENT 'Containing all job listings.';
 
 CREATE TABLE IF NOT EXISTS company (
