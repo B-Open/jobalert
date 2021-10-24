@@ -1,6 +1,6 @@
 using Shared;
 using Shared.Models;
-using Shared.Services;
+using Shared.Services.Scrapers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,8 @@ namespace Api.Controllers
             ScraperServiceFactory factory = new ScraperServiceFactory();
             
             //TODO: prevent re-instatiating scraper object every request
-            factory.ScraperProvider = "jobcenter";
+            factory.ScraperProvider = "dummy";
+            // factory.ScraperProvider = "jobcenter";
 
             IScraperService scraper = factory.Build();
 

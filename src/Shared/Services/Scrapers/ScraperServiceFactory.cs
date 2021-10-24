@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shared.Services
+namespace Shared.Services.Scrapers
 {
     public class ScraperServiceFactory
     {

@@ -2,7 +2,7 @@ using Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Shared.Services
+namespace Shared.Services.Scrapers
 {
     public interface IScraperService
     {

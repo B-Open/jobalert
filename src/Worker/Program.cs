@@ -1,5 +1,5 @@
 ﻿using Shared.Models;
-using Shared.Services;
+using Shared.Services.Scrapers;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
