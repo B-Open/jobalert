@@ -4,9 +4,13 @@ services:
     build: .
     ports:
       - "5000:80"
+    depends_on:
+      - "db"
   worker:
     build: .
     entrypoint: ["dotnet", "Worker.dll"]
+    depends_on:
+      - "db"
   db:
     image: mysql:8.0
     volumes:
