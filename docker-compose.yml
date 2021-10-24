@@ -16,7 +16,8 @@ services:
     image: migrate/migrate
     volumes:
       - './migrations:/migrations'
-    command: ["-path", "/migrations", "-database",  "mysql://root:secret@tcp(db:3306)/jobalert", "up", "3"]
+    # command: ["-path", "/migrations", "-database",  "mysql://root:secret@tcp(db:3306)/jobalert", "up", "3"]
+    command: ["-path", "/migrations", "-database",  "mysql://root:secret@tcp(db:3306)/jobalert", "down", "--y"]
     depends_on: 
       - "db"
 
