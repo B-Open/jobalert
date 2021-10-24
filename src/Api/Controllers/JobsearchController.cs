@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shared.Repositories;
 
 namespace Api.Controllers
 {
@@ -15,10 +16,12 @@ namespace Api.Controllers
     public class JobsearchController : ControllerBase
     {
         private readonly ILogger<JobsearchController> _logger;
+        private readonly IJobRepository _jobRepository;
 
-        public JobsearchController(ILogger<JobsearchController> logger)
+        public JobsearchController(ILogger<JobsearchController> logger, IJobRepository jobRepository)
         {
             _logger = logger;
+            _jobRepository = jobRepository;
         }
 
         [HttpGet]
@@ -31,11 +34,18 @@ namespace Api.Controllers
             {
                 _logger.LogInformation($"Searched keyword {search}");
                 scraper.setKeyword(search);
-            } 
+            }
 
             List<Job> scrapedJobs = await scraper.scrape();
 
             return scrapedJobs;
+        }
+
+        [HttpGet("demo")]
+        public async Task<IEnumerable<Job>> GetJobsAsync()
+        {
+            _logger.LogInformation("invoked demo");
+            return await _jobRepository.GetAsync();
         }
     }
 }
