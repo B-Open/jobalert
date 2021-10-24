@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Shared.Services
+namespace Shared.Services.Scrapers.Scrapers
 {
     class ProxyService
     {
