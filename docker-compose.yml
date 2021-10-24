@@ -36,7 +36,7 @@ services:
       - "jobalert_db:/var/lib/mysql"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
+      MYSQL_DATABASE: '${DB_DATABASE:-jobalert}'
 volumes:
   jobalert_db:
