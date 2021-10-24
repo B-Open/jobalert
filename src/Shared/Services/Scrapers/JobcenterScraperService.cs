@@ -1,5 +1,6 @@
 using Shared.Models;
 using System;
+using System.Web;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace Shared.Services.Scrapers
 
                 var locationLi = lis[1];
 
-                var location = locationLi.InnerText.Replace("&nbsp; ", "");
+                var location = HttpUtility.HtmlDecode(locationLi.InnerText);
 
                 var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont a").Attributes["href"].Value;
 
@@ -111,7 +112,7 @@ namespace Shared.Services.Scrapers
                 eachNode.Attributes.RemoveAll();
             }
 
-            string jobDescription = jobDescriptionNode.InnerHtml;
+            string jobDescription = HttpUtility.HtmlDecode(jobDescriptionNode.InnerHtml);
 
             // we can do above or
             // string jobDescription = jobDescriptionNode.InnerText;

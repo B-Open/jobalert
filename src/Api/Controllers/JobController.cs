@@ -29,8 +29,8 @@ namespace Api.Controllers
             ScraperServiceFactory factory = new ScraperServiceFactory();
             
             //TODO: prevent re-instatiating scraper object every request
-            factory.ScraperProvider = "dummy";
-            // factory.ScraperProvider = "jobcenter";
+            // factory.ScraperProvider = "dummy";
+            factory.ScraperProvider = "jobcenter";
 
             IScraperService scraper = factory.Build();
 
