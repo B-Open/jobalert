@@ -23,18 +23,20 @@ namespace Shared.Repositories
             return jobs;
         }
 
-        public Task<Job> Get(int id)
+        public async Task<Job> Get(int id)
         {
-            throw new System.NotImplementedException();
+            var sql = "SELECT * FROM job WHERE id = @id";
+
+            return await _conn.QueryFirstAsync(sql, new { id = id }); 
         }
 
         public async Task Insert(Job job)
         {
             var sql = @"
-INSERT INTO job
-  (provider_id, provider_job_id, company_id, title, salary, salary_min, salary_max, location, description)
-VALUES
-  (@providerid, @providerjobid, @companyid, @title, @salary, @salarymin, @salarymax, @location, @description)";
+            INSERT INTO job
+            (provider_id, provider_job_id, company_id, title, salary, salary_min, salary_max, salary_type, location, description)
+            VALUES
+            (@providerid, @providerjobid, @companyid, @title, @salary, @salarymin, @salarymax, @salarytype, @location, @description)";
 
             await _conn.ExecuteAsync(sql, job);
         }

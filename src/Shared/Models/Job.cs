@@ -1,3 +1,5 @@
+using Shared.Enums;
+
 namespace Shared.Models
 {
     public class Job
@@ -10,6 +12,7 @@ namespace Shared.Models
         public string Salary { get; set; }
         public decimal SalaryMin { get; set; }
         public decimal SalaryMax { get; set; }
+        public SalaryType SalaryType { get; set; }
         public string Location { get; set; } // TODO: add function to deserialise JSON
         public string Description { get; set; }
 
