@@ -35,6 +35,7 @@ namespace Shared.Services.Scrapers
                     Salary = $"B$ {Faker.RandomNumber.Next(1000, 2000)}",
                     JobDescription = Faker.Company.BS(),
                 });
+                Console.WriteLine("test format check");
             }
 
             // I don't know how to wrap Task into this variable
