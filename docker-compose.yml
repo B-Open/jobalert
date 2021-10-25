@@ -7,7 +7,7 @@ services:
     depends_on:
       - "db"
     environment:
-      - "server=db;uid=root;pwd=${DB_PASSWORD:-secret};database=${DB_DATABASE:-jobalert}"
+      - "ConnectionStrings__Default=server=db;uid=root;pwd=${DB_PASSWORD:-secret};database=${DB_DATABASE:-jobalert};allow user variables=true;"
 
   worker:
     build: .
@@ -15,7 +15,7 @@ services:
     depends_on:
       - "db"
     environment:
-      - "server=db;uid=root;pwd=${DB_PASSWORD:-secret};database=${DB_DATABASE:-jobalert}"
+      - "ConnectionStrings__Default=server=db;uid=root;pwd=${DB_PASSWORD:-secret};database=${DB_DATABASE:-jobalert};allow user variables=true;"
   
   migrate:
     image: migrate/migrate
