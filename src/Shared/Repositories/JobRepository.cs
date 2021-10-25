@@ -5,7 +5,8 @@ using Dapper;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Shared.Repositories {
+namespace Shared.Repositories
+{
     public class JobRepository : IJobRepository
     {
         private readonly IDbConnection _conn;
@@ -16,17 +17,17 @@ namespace Shared.Repositories {
 
         public async Task<List<Job>> GetAsync()
         {
-            var sql = "SELECT id, title Name FROM job";
+            var sql = "SELECT id, title FROM job";
             var jobs = (await _conn.QueryAsync<Job>(sql)).ToList();
             return jobs;
         }
 
-        public Job Get(int id)
+        public Task<Job> Get(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Insert(List<Job> jobs)
+        public Task Insert(List<Job> jobs)
         {
             throw new System.NotImplementedException();
         }

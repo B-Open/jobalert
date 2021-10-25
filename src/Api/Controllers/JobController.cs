@@ -25,9 +25,9 @@ namespace Api.Controllers
         public async Task<IEnumerable<Job>> Get(string search = null)
         {
             _logger.LogInformation("jobsearch API invoked");
-            
+
             ScraperServiceFactory factory = new ScraperServiceFactory();
-            
+
             //TODO: prevent re-instatiating scraper object every request
             // factory.ScraperProvider = "dummy";
             factory.ScraperProvider = "jobcenter";
@@ -38,7 +38,7 @@ namespace Api.Controllers
             {
                 _logger.LogInformation($"Searched keyword {search}");
                 scraper.Keyword = search;
-            } 
+            }
 
             List<Job> scrapedJobs = await scraper.Scrape();
 

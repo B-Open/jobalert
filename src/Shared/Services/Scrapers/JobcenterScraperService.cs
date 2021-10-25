@@ -5,15 +5,12 @@ using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Shared.Services.Scrapers
 {
-    public class JobcenterScraperService: IScraperService
+    public class JobcenterScraperService : IScraperService
     {
 
         public string Keyword { get; set; }
@@ -56,12 +53,13 @@ namespace Shared.Services.Scrapers
                 // need to go to each of the job and scraped its content
                 var jobDescription = await this.scrapeJobDescription(jobUrl);
 
-                Job job = new Job {
-                    Name = name,
-                    CompanyName = companyName,
+		// TODO: need some logic to handle adding company
+                Job job = new Job
+                {
+                    Title = name,
                     Salary = salary,
                     Location = location,
-                    JobDescription = jobDescription,
+                    Description = jobDescription,
                 };
 
                 scrapedJobs.Add(job);
@@ -85,13 +83,13 @@ namespace Shared.Services.Scrapers
                     url = $"{url}?q={this.Keyword}";
                 }
             }
-            
-            
+
+
             HttpResponseMessage response = await httpClient.GetAsync(url);
 
             response.EnsureSuccessStatusCode();
 
-            string htmlContent = await response.Content.ReadAsStringAsync(); 
+            string htmlContent = await response.Content.ReadAsStringAsync();
 
             return htmlContent;
         }
@@ -107,7 +105,7 @@ namespace Shared.Services.Scrapers
             jobDescriptionNode.QuerySelector(".jp_job_res .other-details").Remove();
 
             // remove all the unnecessary classes and styles
-            foreach(var eachNode in jobDescriptionNode.Descendants().Where(x => x.NodeType == HtmlNodeType.Element))
+            foreach (var eachNode in jobDescriptionNode.Descendants().Where(x => x.NodeType == HtmlNodeType.Element))
             {
                 eachNode.Attributes.RemoveAll();
             }
