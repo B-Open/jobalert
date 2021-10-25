@@ -1,5 +1,5 @@
 ﻿using Shared.Models;
-using Shared.Services;
+using Shared.Services.Scrapers;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
@@ -14,9 +14,9 @@ namespace Worker
             JobcenterScraperService scraper = new JobcenterScraperService();
 
             // setting the keyword
-            scraper.setKeyword("programmer");
+            scraper.Keyword = "programmer";
 
-            List<Job> jobs = await scraper.scrape();
+            List<Job> jobs = await scraper.Scrape();
 
             // Just to check the scraped job 
             foreach (var job in jobs)

@@ -48,6 +48,15 @@ docker-compose up -d
 docker-compose -d db
 ```
 
+### Migrate DB
+```bash
+docker-compose -d db migrate
+```
+
+### Running adminer
+```bash
+docker-compose -d db adminer
+
 ### Example
 
 #### Running database only and rerun worker during development.
