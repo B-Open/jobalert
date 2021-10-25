@@ -6,8 +6,9 @@ namespace Shared.Repositories
 {
     public interface IJobRepository
     {
-        Task Insert(List<Job> jobs);
         Task<List<Job>> Get();
         Task<Job> Get(int id);
+        Task Insert(Job job);
+        Task Insert(IEnumerable<Job> jobs);
     }
 }

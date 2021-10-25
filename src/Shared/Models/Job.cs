@@ -15,5 +15,10 @@ namespace Shared.Models
 
         public Provider Provider { get; set; }
         public Company Company { get; set; }
+
+	public Job()
+	{
+		ProviderId = 0;
+	}
     }
 }

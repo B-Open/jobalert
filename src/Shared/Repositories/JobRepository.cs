@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Data;
 using Shared.Models;
 using Dapper;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,9 +28,20 @@ namespace Shared.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Task Insert(List<Job> jobs)
+        public async Task Insert(Job job)
         {
-            throw new System.NotImplementedException();
+            var sql = @"
+INSERT INTO job
+  (provider_id, provider_job_id, company_id, title, salary, salary_min, salary_max, location, description)
+VALUES
+  (@providerid, @providerjobid, @companyid, @title, @salary, @salarymin, @salarymax, @location, @description)";
+
+            await _conn.ExecuteAsync(sql, job);
+        }
+
+        public Task Insert(IEnumerable<Job> jobs)
+        {
+            throw new NotImplementedException();
         }
     }
 }

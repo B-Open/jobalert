@@ -60,6 +60,7 @@ namespace Shared.Services.Scrapers
                     Salary = salary,
                     Location = location,
                     Description = jobDescription,
+		    ProviderJobId = "",
                 };
 
                 scrapedJobs.Add(job);
