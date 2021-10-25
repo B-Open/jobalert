@@ -16,15 +16,15 @@ namespace Worker
         static async Task Main(string[] args)
         {
             var builder = new ConfigurationBuilder()
-	        .SetBasePath(Directory.GetCurrentDirectory())
-	        .AddJsonFile("appsettings.json", optional: false);
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false);
 
             IConfiguration config = builder.Build();
 
             var conn = new MySqlConnection(config.GetConnectionString("Default"));
             var jobRepository = new JobRepository(conn);
 
-	    Console.WriteLine("init done");
+            Console.WriteLine("init done");
 
             var scraper = new JobcenterScraperService();
 
