@@ -53,7 +53,7 @@ namespace Shared.Services.Scrapers
                 // need to go to each of the job and scraped its content
                 var jobDescription = await this.scrapeJobDescription(jobUrl);
 
-		// TODO: need some logic to handle adding company
+                // TODO: need some logic to handle adding company
                 Job job = new Job
                 {
                     Title = name,
