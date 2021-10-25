@@ -48,7 +48,7 @@ namespace Api.Controllers
         [HttpGet("demo")]
         public async Task<IEnumerable<Job>> GetJobsAsync()
         {
-            return await _jobRepository.GetAsync();
+            return await _jobRepository.Get();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Shared.Repositories
             _conn = conn;
         }
 
-        public async Task<List<Job>> GetAsync()
+        public async Task<List<Job>> Get()
         {
             var sql = "SELECT * FROM job";
             var jobs = (await _conn.QueryAsync<Job>(sql)).ToList();
