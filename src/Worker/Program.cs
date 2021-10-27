@@ -26,8 +26,6 @@ namespace Worker
             var conn = new MySqlConnection(config.GetConnectionString("Default"));
             var jobRepository = new JobRepository(conn);
 
-            Console.WriteLine("init done");
-
             var scraper = new JobcenterScraperService();
 
             // setting the keyword
