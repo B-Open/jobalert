@@ -2,8 +2,12 @@
 using Shared.Services.Scrapers;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using MySql.Data.MySqlClient;
+using Shared.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace Worker
 {
@@ -11,7 +15,18 @@ namespace Worker
     {
         static async Task Main(string[] args)
         {
-            JobcenterScraperService scraper = new JobcenterScraperService();
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args);
+
+            IConfiguration config = builder.Build();
+
+            var conn = new MySqlConnection(config.GetConnectionString("Default"));
+            var jobRepository = new JobRepository(conn);
+
+            var scraper = new JobcenterScraperService();
 
             // setting the keyword
             scraper.Keyword = "programmer";
@@ -22,7 +37,19 @@ namespace Worker
             foreach (var job in jobs)
             {
                 Console.WriteLine(JsonConvert.SerializeObject(job));
+                // TODO: add more info
+                // TODO: insert in batches
+                // TODO: detect duplicates
+                try
+                {
+                    await jobRepository.Insert(job);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
         }
     }
 }
+

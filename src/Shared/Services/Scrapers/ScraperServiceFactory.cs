@@ -17,7 +17,7 @@ namespace Shared.Services.Scrapers
                 .Where(
                     mytype => mytype.GetInterfaces().Contains(typeof(IScraperService))
                 );
-            
+
             // Over-Complicate getting the scraper provider
             // if this.ScraperProvider equals to any of the 
             // IScraperServices Implementations' GetProviderName method
@@ -29,13 +29,14 @@ namespace Shared.Services.Scrapers
             foreach (Type scraperServiceType in scraperServiceTypes)
             {
                 ConstructorInfo magicConstructor = scraperServiceType.GetConstructor(Type.EmptyTypes);
-                object magicClassObject = magicConstructor.Invoke(new object[]{});
+                object magicClassObject = magicConstructor.Invoke(new object[] { });
                 MethodInfo magicMethod = scraperServiceType.GetMethod("GetProviderName");
-                string providerName = (string) magicMethod.Invoke(magicClassObject, null);
+                string providerName = (string)magicMethod.Invoke(magicClassObject, null);
 
                 // return the matching implementation
-                if (this.ScraperProvider.ToLower() == providerName) {
-                    return (IScraperService) magicClassObject;
+                if (this.ScraperProvider.ToLower() == providerName)
+                {
+                    return (IScraperService)magicClassObject;
                 }
             }
 
