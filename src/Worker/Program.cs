@@ -16,8 +16,10 @@ namespace Worker
         static async Task Main(string[] args)
         {
             var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false);
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false)
+                .AddEnvironmentVariables()
+                .AddCommandLine(args);
 
             IConfiguration config = builder.Build();
 
@@ -52,3 +54,4 @@ namespace Worker
         }
     }
 }
+
