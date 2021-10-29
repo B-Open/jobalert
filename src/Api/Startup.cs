@@ -33,6 +33,7 @@ namespace Api
             var connectionString = Configuration.GetConnectionString("Default");
             services.AddTransient<IDbConnection>(db => new MySqlConnection(connectionString));
             services.AddSingleton<IJobRepository, JobRepository>();
+            services.AddSingleton<ICompanyRepository, CompanyRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
