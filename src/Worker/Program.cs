@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
 using Shared.Repositories;
 using Microsoft.Extensions.Configuration;
+using Shared.Services;
 
 namespace Worker
 {
@@ -23,31 +24,32 @@ namespace Worker
 
             IConfiguration config = builder.Build();
 
+            // set up database repositories
             var conn = new MySqlConnection(config.GetConnectionString("Default"));
             var jobRepository = new JobRepository(conn);
+            var companyRepository = new CompanyRepository(conn);
+            var jobService = new JobService(jobRepository, companyRepository);
 
             var scraper = new JobcenterScraperService();
 
-            // setting the keyword
+            // setting the keyword  -- TODO: remove
             scraper.Keyword = "programmer";
 
             List<Job> jobs = await scraper.Scrape();
 
+            // save to database
+            try
+            {
+                await jobService.UpdateJobs(jobs);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             // Just to check the scraped job 
             foreach (var job in jobs)
             {
                 Console.WriteLine(JsonConvert.SerializeObject(job));
-                // TODO: add more info
-                // TODO: insert in batches
-                // TODO: detect duplicates
-                try
-                {
-                    await jobRepository.Insert(job);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
             }
         }
     }
