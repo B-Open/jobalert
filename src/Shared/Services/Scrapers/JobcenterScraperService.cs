@@ -1,5 +1,6 @@
 using Shared.Models;
 using Shared.Enums;
+using Shared;
 using System;
 using System.Web;
 using HtmlAgilityPack;
@@ -75,8 +76,8 @@ namespace Shared.Services.Scrapers
                     Title = name,
                     Salary = salary,
                     SalaryType = job_salary_types[salary_type.ToLower()],
-                    SalaryMin = this.convertKToThousand(salary_min),
-                    SalaryMax = this.convertKToThousand(salary_max),
+                    SalaryMin = Utils.ConvertKToThousand(salary_min),
+                    SalaryMax = Utils.ConvertKToThousand(salary_max),
                     Location = location,
                     Description = jobDescription,
                     ProviderJobId = "",
@@ -87,15 +88,6 @@ namespace Shared.Services.Scrapers
             }
 
             return scrapedJobs;
-        }
-
-        private decimal convertKToThousand(string number)
-        {
-            bool result = number.ToLower().Contains("k");
-
-            if (!result) return decimal.Parse(number);
-
-            return (decimal.Parse(number.ToLower().Replace("k",""))) * 1000;
         }
 
 
