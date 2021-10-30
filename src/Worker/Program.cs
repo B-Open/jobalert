@@ -42,9 +42,16 @@ namespace Worker
             List<Job> jobs = await scraper.Scrape();
 
             // save to database
-            await jobService.UpdateJobs(jobs);
-
-            await transaction.CommitAsync();
+            try
+            {
+                await jobService.UpdateJobs(jobs);
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
 
             // Just to check the scraped job 
             foreach (var job in jobs)
