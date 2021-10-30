@@ -5,19 +5,23 @@ using System.Threading.Tasks;
 using Dapper;
 using Shared.Models;
 
-namespace Shared.Repositories {
-	public class CompanyRepository : ICompanyRepository
-	{
+namespace Shared.Repositories
+{
+    public class CompanyRepository : ICompanyRepository
+    {
         private readonly IDbConnection _conn;
-        public CompanyRepository(IDbConnection conn)
+        private readonly IDbTransaction _trans;
+
+        public CompanyRepository(IDbTransaction transaction)
         {
-            _conn = conn;
+            _trans = transaction;
+            _conn = transaction.Connection;
         }
 
         public async Task<Company> Get(int id)
         {
             var sql = "SELECT * FROM company WHERE id = ?";
-            var company = (await _conn.QueryFirstOrDefaultAsync<Company>(sql, id));
+            var company = (await _conn.QueryFirstOrDefaultAsync<Company>(sql, id, _trans));
             return company;
         }
 
@@ -29,7 +33,7 @@ INSERT INTO company
 VALUES
   (@name, @providercompanyid)";
 
-            await _conn.ExecuteAsync(sql, company);
+            await _conn.ExecuteAsync(sql, company, _trans);
         }
 
         public Task Insert(IEnumerable<Company> company)
@@ -40,7 +44,7 @@ VALUES
         public async Task<List<Company>> Get()
         {
             var sql = "SELECT * FROM company";
-            var companies = (await _conn.QueryAsync<Company>(sql)).ToList();
+            var companies = (await _conn.QueryAsync<Company>(sql, null, _trans)).ToList();
             return companies;
         }
     }

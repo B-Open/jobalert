@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Data;
+using System;
 
 namespace Api.Controllers
 {
@@ -14,10 +16,12 @@ namespace Api.Controllers
     {
         private readonly ILogger<JobController> _logger;
         private readonly IJobRepository _jobRepository;
+        private readonly IDbTransaction _transaction;
 
-        public JobController(ILogger<JobController> logger, IJobRepository jobRepository)
+        public JobController(ILogger<JobController> logger, IDbTransaction transaction, IJobRepository jobRepository)
         {
             _logger = logger;
+            _transaction = transaction;
             _jobRepository = jobRepository;
         }
 
@@ -48,7 +52,21 @@ namespace Api.Controllers
         [HttpGet("demo")]
         public async Task<IEnumerable<Job>> GetJobsAsync()
         {
-            return await _jobRepository.Get();
+            _logger.LogInformation("company API invoked");
+
+            IEnumerable<Job> jobs;
+            try
+            {
+                jobs = await _jobRepository.Get();
+            }
+            catch
+            {
+                _transaction.Rollback();
+                throw;
+            }
+            _transaction.Commit();
+
+            return jobs;
         }
     }
 }
