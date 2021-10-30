@@ -23,6 +23,7 @@ namespace Worker
 
             IConfiguration config = builder.Build();
 
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
             var conn = new MySqlConnection(config.GetConnectionString("Default"));
             var jobRepository = new JobRepository(conn);
 
