@@ -25,8 +25,11 @@ namespace Shared.Services.Scrapers
         public async Task<List<Job>> Scrape()
         {
             var htmlDoc = new HtmlDocument();
+            Console.WriteLine("start fetch");
             string content = await this.fetchWebsite();
+            Console.WriteLine("end fetch");
             htmlDoc.LoadHtml(content);
+            Console.WriteLine("end load html");
 
             var jobPostings = htmlDoc.QuerySelectorAll(".list-group-item.list-group-item-flex");
 

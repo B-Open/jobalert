@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
 using Shared.Repositories;
 using Microsoft.Extensions.Configuration;
+using Shared.Services;
+using System.Transactions;
 
 namespace Worker
 {
@@ -23,33 +25,41 @@ namespace Worker
 
             IConfiguration config = builder.Build();
 
+            // set up database repositories
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-            var conn = new MySqlConnection(config.GetConnectionString("Default"));
-            var jobRepository = new JobRepository(conn);
+            using var conn = new MySqlConnection(config.GetConnectionString("Default"));
+            await conn.OpenAsync();
+            var transaction = conn.BeginTransaction();
+
+            var jobRepository = new JobRepository(transaction);
+            var companyRepository = new CompanyRepository(transaction);
+            var jobService = new JobService(jobRepository, companyRepository);
 
             var scraper = new JobcenterScraperService();
 
-            // setting the keyword
+            // setting the keyword  -- TODO: remove
             scraper.Keyword = "programmer";
 
             List<Job> jobs = await scraper.Scrape();
+
+            // save to database
+            try
+            {
+                await jobService.UpdateJobs(jobs);
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
 
             // Just to check the scraped job 
             foreach (var job in jobs)
             {
                 Console.WriteLine(JsonConvert.SerializeObject(job));
-                // TODO: add more info
-                // TODO: insert in batches
-                // TODO: detect duplicates
-                try
-                {
-                    await jobRepository.Insert(job);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
             }
+
         }
     }
 }
