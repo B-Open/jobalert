@@ -11,15 +11,18 @@ namespace Shared.Repositories
     public class JobRepository : IJobRepository
     {
         private readonly IDbConnection _conn;
-        public JobRepository(IDbConnection conn)
+        private readonly IDbTransaction _trans;
+
+        public JobRepository(IDbTransaction transaction)
         {
-            _conn = conn;
+            _trans = transaction;
+            _conn = transaction.Connection;
         }
 
         public async Task<List<Job>> Get()
         {
             var sql = "SELECT * FROM job";
-            var jobs = (await _conn.QueryAsync<Job>(sql)).ToList();
+            var jobs = (await _conn.QueryAsync<Job>(sql, null, _trans)).ToList();
             return jobs;
         }
 
@@ -38,7 +41,7 @@ namespace Shared.Repositories
             VALUES
             (@providerid, @providerjobid, @companyid, @title, @salary, @salarymin, @salarymax, @salarytype, @location, @description)";
 
-            await _conn.ExecuteAsync(sql, job);
+            await _conn.ExecuteAsync(sql, job, _trans);
         }
 
         public Task Insert(IEnumerable<Job> jobs)
