@@ -29,23 +29,25 @@ namespace Shared.Services.Scrapers
 
             List<Job> scrapedJobs = new List<Job>();
 
-            IDictionary<string, SalaryType> salaryTypes = new Dictionary<string, SalaryType>();
-
-            salaryTypes["monthly"] = SalaryType.Monthly;
-            salaryTypes["daily"] = SalaryType.Daily;
-
             foreach (var jobPosting in jobPostings)
             {
                 // TODO: queue jobs and run in parallel
-                var job = await getJob(jobPosting, salaryTypes);
+                var job = await getJob(jobPosting);
                 scrapedJobs.Add(job);
             }
 
             return scrapedJobs;
         }
 
-        private async Task<Job> getJob(HtmlNode jobPosting, IDictionary<string, SalaryType> salaryTypes)
+        /// <summary>
+        /// Get Job object from a HtmlNode. Includes Company information in the result.
+        /// </summary>
+        private async Task<Job> getJob(HtmlNode jobPosting)
         {
+            var salaryTypes = new Dictionary<string, SalaryType>();
+            salaryTypes["monthly"] = SalaryType.Monthly;
+            salaryTypes["daily"] = SalaryType.Daily;
+
             // get job name
             var name = jobPosting.QuerySelector("h4").InnerText;
             var companyName = jobPosting.QuerySelector("p a").InnerText; // TODO: change to use company object
@@ -89,6 +91,9 @@ namespace Shared.Services.Scrapers
         }
 
 
+        /// <summary>
+        /// Get the body from a URL and return it as a string.
+        /// </summary>
         private async Task<string> fetchWebsite(string url = null)
         {
             // TODO: add retry logic
@@ -104,7 +109,6 @@ namespace Shared.Services.Scrapers
                 }
             }
 
-
             HttpResponseMessage response = await httpClient.GetAsync(url);
 
             response.EnsureSuccessStatusCode();
@@ -114,23 +118,28 @@ namespace Shared.Services.Scrapers
             return htmlContent;
         }
 
+        /// <summary>
+        /// Get the job description from an individual job page.
+        /// </summary>
         private async Task<string> scrapeJobDescription(string jobUrl)
         {
-            var jobPosting = new HtmlDocument();
+            var doc = new HtmlDocument();
             string content = await this.fetchWebsite(jobUrl);
-            jobPosting.LoadHtml(content);
+            doc.LoadHtml(content);
 
-            var jobDescriptionNode = jobPosting.QuerySelector(".job-viewer-wrapper-content");
-            jobDescriptionNode.QuerySelector(".job-title").Remove();
-            jobDescriptionNode.QuerySelector(".jp_job_res .other-details").Remove();
+            var descriptionNode = doc.QuerySelector(".job-viewer-wrapper-content");
+            descriptionNode.QuerySelector(".job-title").Remove();
+            descriptionNode.QuerySelector(".jp_job_res .other-details").Remove();
 
             // remove all the unnecessary classes and styles
-            foreach (var eachNode in jobDescriptionNode.Descendants().Where(x => x.NodeType == HtmlNodeType.Element))
+            foreach (var node in descriptionNode.Descendants().Where(x => x.NodeType == HtmlNodeType.Element))
             {
-                eachNode.Attributes.RemoveAll();
+                node.Attributes.RemoveAll();
             }
 
-            string jobDescription = HttpUtility.HtmlDecode(jobDescriptionNode.InnerHtml);
+            string jobDescription = HttpUtility.HtmlDecode(descriptionNode.InnerHtml);
+
+            // TODO: clean whitespaces and sanitise HTML
 
             // we can do above or
             // string jobDescription = jobDescriptionNode.InnerText;
