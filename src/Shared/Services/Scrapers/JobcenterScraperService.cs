@@ -85,13 +85,13 @@ namespace Shared.Services.Scrapers
                 SalaryMax = Utils.ConvertKToThousand(salaryMax),
                 Location = location,
                 Description = jobDescription,
-                ProviderJobId = GetJobProviderIdFromUrl(jobUrl),
+                ProviderJobId = GetProviderJobIdFromUrl(jobUrl),
             };
 
             return job;
         }
 
-        public static string GetJobProviderIdFromUrl(string url)
+        public static string GetProviderJobIdFromUrl(string url)
         {
             var uri = new Uri(url);
             var regex = new Regex(@"^\/web\/guest\/view-job\/-\/jobs\/(\d+)\/.*$");
@@ -107,6 +107,21 @@ namespace Shared.Services.Scrapers
             return match.Groups[1].Value;
         }
 
+        public static string GetProviderCompanyIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var regex = new Regex(@"^\/web\/guest\/view-employer\/-\/employer\/(\d+)");
+
+            if (!regex.IsMatch(uri.PathAndQuery))
+            {
+                throw new ArgumentException("URL is not valid. Please supply a company page URL.");
+
+            }
+
+            var match = regex.Match(uri.PathAndQuery);
+
+            return match.Groups[1].Value;
+        }
 
         /// <summary>
         /// Get the body from a URL and return it as a string.
