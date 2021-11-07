@@ -15,9 +15,10 @@ namespace Shared.Tests
         [InlineData("5K", 5000)]
         [InlineData("9K", 9000)]
         [InlineData("23121K", 23121000)]
-        public void TestConvertKToThousand(string number, decimal expected)
+        [InlineData("500", 500)]
+        public void TestParseNumber(string number, decimal expected)
         {
-            var result = Utils.ConvertKToThousand(number);
+            var result = Utils.ParseNumber(number);
             Assert.Equal(result, expected);
         }
     }

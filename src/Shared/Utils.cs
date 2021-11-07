@@ -1,13 +1,18 @@
-using System;
 
 namespace Shared
 {
     public class Utils
     {
-
-        public static decimal ConvertKToThousand(string number)
+        /// <summary>
+        /// Parse a number in string format to decimal
+        /// </summary>
+        public static decimal ParseNumber(string number)
         {
-            return (decimal.Parse(number.ToLower().Replace("k",""))) * 1000;
+            if (number.ToLower().Contains("k"))
+            {
+                return (decimal.Parse(number.ToLower().Replace("k", ""))) * 1000;
+            }
+            return decimal.Parse(number);
         }
     }
 }
