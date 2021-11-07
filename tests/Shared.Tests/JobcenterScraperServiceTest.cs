@@ -24,6 +24,7 @@ namespace Shared.Tests
 
         [Theory]
         [InlineData("https://jobcentrebrunei.gov.bn/web/guest/view-employer/-/employer/4517018", "4517018")]
+        [InlineData("https://jobcentrebrunei.gov.bn/web/guest/view-employer/-/employer/736512", "736512")]
         public void TestGetProviderCompanyIdFromUrl(string url, string expected)
         {
             var result = JobcenterScraperService.GetProviderCompanyIdFromUrl(url);

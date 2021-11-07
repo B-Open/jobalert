@@ -51,7 +51,7 @@ namespace Shared.Services.Scrapers
 
             // get job name
             var name = jobPosting.QuerySelector("h4").InnerText;
-            var companyName = jobPosting.QuerySelector("p a").InnerText; // TODO: change to use company object
+            var companyName = jobPosting.QuerySelector("p a").InnerText;
 
             var lis = jobPosting.QuerySelectorAll("ul li");
 
@@ -69,14 +69,22 @@ namespace Shared.Services.Scrapers
             var location = HttpUtility.HtmlDecode(locationLi.InnerText);
 
             // get job url
-            var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont a").Attributes["href"].Value;
+            var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont h4 a").Attributes["href"].Value;
             jobUrl = $"{this._jobcenterUrl}{jobUrl}";
+
+            // get company url
+            var companyUrl = jobPosting.QuerySelector(".jp_job_post_right_cont p a").Attributes["href"].Value;
+            companyUrl = $"{this._jobcenterUrl}{companyUrl}";
 
             // need to go to each of the job and scraped its content
             var jobDescription = await this.scrapeJobDescription(jobUrl);
 
-            // TODO: need some logic to handle adding company
-            Job job = new Job
+            var company = new Company
+            {
+                Name = companyName,
+                ProviderCompanyId = GetProviderCompanyIdFromUrl(companyUrl),
+            };
+            var job = new Job
             {
                 Title = name,
                 Salary = salary,
@@ -86,6 +94,7 @@ namespace Shared.Services.Scrapers
                 Location = location,
                 Description = jobDescription,
                 ProviderJobId = GetProviderJobIdFromUrl(jobUrl),
+                Company = company,
             };
 
             return job;
