@@ -9,7 +9,6 @@ using MySql.Data.MySqlClient;
 using Shared.Repositories;
 using Microsoft.Extensions.Configuration;
 using Shared.Services;
-using System.Transactions;
 
 namespace Worker
 {
@@ -26,6 +25,7 @@ namespace Worker
             IConfiguration config = builder.Build();
 
             // set up database repositories
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
             using var conn = new MySqlConnection(config.GetConnectionString("Default"));
             await conn.OpenAsync();
             var transaction = conn.BeginTransaction();
@@ -62,3 +62,4 @@ namespace Worker
         }
     }
 }
+
