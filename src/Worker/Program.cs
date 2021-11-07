@@ -1,4 +1,4 @@
-﻿using Shared.Models;
+using Shared.Models;
 using Shared.Services.Scrapers;
 using System.Collections.Generic;
 using System;
@@ -9,7 +9,6 @@ using MySql.Data.MySqlClient;
 using Shared.Repositories;
 using Microsoft.Extensions.Configuration;
 using Shared.Services;
-using System.Transactions;
 
 namespace Worker
 {

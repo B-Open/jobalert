@@ -1,4 +1,6 @@
 using Shared.Models;
+using Shared.Enums;
+using Shared;
 using System;
 using System.Web;
 using HtmlAgilityPack;
@@ -35,6 +37,11 @@ namespace Shared.Services.Scrapers
 
             List<Job> scrapedJobs = new List<Job>();
 
+            IDictionary<string, SalaryType> job_salary_types = new Dictionary<string, SalaryType>();
+
+            job_salary_types["monthly"] = SalaryType.Monthly;
+            job_salary_types["daily"] = SalaryType.Daily;
+
             foreach (var jobPosting in jobPostings)
             {
                 var name = jobPosting.QuerySelector("h4").InnerText;
@@ -44,6 +51,16 @@ namespace Shared.Services.Scrapers
                 var lis = jobPosting.QuerySelectorAll("ul li");
 
                 var salary = lis[0].InnerText;
+
+                var salary_array = salary.Split(' ');
+
+                var salary_type = salary_array[2]; // get the last array value
+
+                var salary_range_array = (salary_array[1]).Split("-"); // get the second last array value
+
+                var salary_min = salary_range_array[0];
+
+                var salary_max = salary_range_array[1];
 
                 var locationLi = lis[1];
 
@@ -61,6 +78,9 @@ namespace Shared.Services.Scrapers
                 {
                     Title = name,
                     Salary = salary,
+                    SalaryType = job_salary_types[salary_type.ToLower()],
+                    SalaryMin = Utils.ConvertKToThousand(salary_min),
+                    SalaryMax = Utils.ConvertKToThousand(salary_max),
                     Location = location,
                     Description = jobDescription,
                     ProviderJobId = "",

@@ -6,6 +6,7 @@ COPY JobAlert.sln .
 COPY src/Api/Api.csproj ./src/Api/Api.csproj
 COPY src/Shared/Shared.csproj ./src/Shared/Shared.csproj
 COPY src/Worker/Worker.csproj ./src/Worker/Worker.csproj
+COPY tests/Shared.Tests/Shared.Tests.csproj ./tests/Shared.Tests/Shared.Tests.csproj 
 RUN dotnet restore
 
 # Copy everything else and build
