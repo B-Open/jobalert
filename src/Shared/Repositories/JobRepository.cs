@@ -30,7 +30,14 @@ namespace Shared.Repositories
         {
             var sql = "SELECT * FROM job WHERE id = @id";
 
-            return await _conn.QueryFirstAsync(sql, id); 
+            return await _conn.QueryFirstAsync<Job>(sql, new { id }, _trans);
+        }
+
+        public async Task<Job> GetByProviderJobId(string id)
+        {
+            var sql = "SELECT * FROM job WHERE provider_job_id = @id";
+
+            return await _conn.QueryFirstOrDefaultAsync<Job>(sql, new { id }, _trans);
         }
 
         public async Task Insert(Job job)
@@ -40,6 +47,25 @@ namespace Shared.Repositories
             (provider_id, provider_job_id, company_id, title, salary, salary_min, salary_max, salary_type, location, description)
             VALUES
             (@providerid, @providerjobid, @companyid, @title, @salary, @salarymin, @salarymax, @salarytype, @location, @description)";
+
+            await _conn.ExecuteAsync(sql, job, _trans);
+        }
+
+        public async Task Update(Job job)
+        {
+            var sql = @"
+            UPDATE job SET
+                provider_id = @providerid,
+                provider_job_id = @providerjobid,
+                company_id = @companyid,
+                title = @title,
+                salary = @salary,
+                salary_min = @salarymin,
+                salary_max = @salarymax,
+                salary_type = @salarytype,
+                location = @location,
+                description = @description
+            WHERE id = @id";
 
             await _conn.ExecuteAsync(sql, job, _trans);
         }
