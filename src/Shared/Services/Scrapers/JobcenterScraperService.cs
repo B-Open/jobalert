@@ -46,24 +46,27 @@ namespace Shared.Services.Scrapers
 
         private async Task<Job> getJob(HtmlNode jobPosting, IDictionary<string, SalaryType> salaryTypes)
         {
+            // get job name
             var name = jobPosting.QuerySelector("h4").InnerText;
-            var companyName = jobPosting.QuerySelector("p a").InnerText;
+            var companyName = jobPosting.QuerySelector("p a").InnerText; // TODO: change to use company object
 
             var lis = jobPosting.QuerySelectorAll("ul li");
 
+            // get salary
             var salary = lis[0].InnerText;
             // TODO: change to regex
-            var salary_array = salary.Split(' ');
-            var salary_type = salary_array[2]; // get the last array value
-            var salary_range_array = (salary_array[1]).Split("-"); // get the second last array value
-            var salary_min = salary_range_array[0];
-            var salary_max = salary_range_array[1];
+            var salaryArray = salary.Split(' ');
+            var salaryType = salaryArray[2]; // get the last array value
+            var salaryRangeArray = (salaryArray[1]).Split("-"); // get the second last array value
+            var salaryMin = salaryRangeArray[0];
+            var salaryMax = salaryRangeArray[1];
 
+            // get location
             var locationLi = lis[1];
             var location = HttpUtility.HtmlDecode(locationLi.InnerText);
 
+            // get job url
             var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont a").Attributes["href"].Value;
-
             jobUrl = $"{this._jobcenterUrl}{jobUrl}";
 
             // need to go to each of the job and scraped its content
@@ -74,9 +77,9 @@ namespace Shared.Services.Scrapers
             {
                 Title = name,
                 Salary = salary,
-                SalaryType = salaryTypes[salary_type.ToLower()],
-                SalaryMin = Utils.ConvertKToThousand(salary_min),
-                SalaryMax = Utils.ConvertKToThousand(salary_max),
+                SalaryType = salaryTypes[salaryType.ToLower()],
+                SalaryMin = Utils.ConvertKToThousand(salaryMin),
+                SalaryMax = Utils.ConvertKToThousand(salaryMax),
                 Location = location,
                 Description = jobDescription,
                 ProviderJobId = "",
