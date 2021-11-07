@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Shared.Services.Scrapers
 {
@@ -15,7 +16,7 @@ namespace Shared.Services.Scrapers
     {
 
         public string Keyword { get; set; }
-        public string ProviderName { get { return "jobcenter"; }}
+        public string ProviderName { get { return "jobcenter"; } }
 
         private string _jobcenterUrl = "https://jobcentrebrunei.gov.bn";
 
@@ -84,10 +85,26 @@ namespace Shared.Services.Scrapers
                 SalaryMax = Utils.ConvertKToThousand(salaryMax),
                 Location = location,
                 Description = jobDescription,
-                ProviderJobId = "",
+                ProviderJobId = GetJobProviderIdFromUrl(jobUrl),
             };
 
             return job;
+        }
+
+        public static string GetJobProviderIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var regex = new Regex(@"^\/web\/guest\/view-job\/-\/jobs\/(\d+)\/.*$");
+
+            if (!regex.IsMatch(uri.PathAndQuery))
+            {
+                throw new ArgumentException("URL is not valid. Please supply a job page URL.");
+
+            }
+
+            var match = regex.Match(uri.PathAndQuery);
+
+            return match.Groups[1].Value;
         }
 
 
