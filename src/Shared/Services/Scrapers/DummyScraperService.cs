@@ -1,12 +1,6 @@
 using Shared.Models;
-using System;
-using HtmlAgilityPack;
-using HtmlAgilityPack.CssSelectors.NetCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Faker;
 
 namespace Shared.Services.Scrapers
 {
@@ -14,12 +8,7 @@ namespace Shared.Services.Scrapers
     {
 
         public string Keyword { get; set; }
-
-
-        public string GetProviderName()
-        {
-            return "dummy";
-        }
+        public string ProviderName { get { return "dummy"; }}
 
         public async Task<List<Job>> Scrape()
         {

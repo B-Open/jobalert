@@ -8,8 +8,7 @@ namespace Shared.Services.Scrapers
     {
 
         string Keyword { get; set; }
-
-        string GetProviderName();
+        string ProviderName { get; }
 
         Task<List<Job>> Scrape();
 

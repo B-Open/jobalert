@@ -1,6 +1,5 @@
 using Shared.Models;
 using Shared.Enums;
-using Shared;
 using System;
 using System.Web;
 using HtmlAgilityPack;
@@ -16,86 +15,80 @@ namespace Shared.Services.Scrapers
     {
 
         public string Keyword { get; set; }
+        public string ProviderName { get { return "jobcenter"; }}
 
         private string _jobcenterUrl = "https://jobcentrebrunei.gov.bn";
-
-        public string GetProviderName()
-        {
-            return "jobcenter";
-        }
 
         public async Task<List<Job>> Scrape()
         {
             var htmlDoc = new HtmlDocument();
-            Console.WriteLine("start fetch");
             string content = await this.fetchWebsite();
-            Console.WriteLine("end fetch");
             htmlDoc.LoadHtml(content);
-            Console.WriteLine("end load html");
 
             var jobPostings = htmlDoc.QuerySelectorAll(".list-group-item.list-group-item-flex");
 
             List<Job> scrapedJobs = new List<Job>();
 
-            IDictionary<string, SalaryType> job_salary_types = new Dictionary<string, SalaryType>();
+            IDictionary<string, SalaryType> salaryTypes = new Dictionary<string, SalaryType>();
 
-            job_salary_types["monthly"] = SalaryType.Monthly;
-            job_salary_types["daily"] = SalaryType.Daily;
+            salaryTypes["monthly"] = SalaryType.Monthly;
+            salaryTypes["daily"] = SalaryType.Daily;
 
             foreach (var jobPosting in jobPostings)
             {
-                var name = jobPosting.QuerySelector("h4").InnerText;
-
-                var companyName = jobPosting.QuerySelector("p a").InnerText;
-
-                var lis = jobPosting.QuerySelectorAll("ul li");
-
-                var salary = lis[0].InnerText;
-
-                var salary_array = salary.Split(' ');
-
-                var salary_type = salary_array[2]; // get the last array value
-
-                var salary_range_array = (salary_array[1]).Split("-"); // get the second last array value
-
-                var salary_min = salary_range_array[0];
-
-                var salary_max = salary_range_array[1];
-
-                var locationLi = lis[1];
-
-                var location = HttpUtility.HtmlDecode(locationLi.InnerText);
-
-                var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont a").Attributes["href"].Value;
-
-                jobUrl = $"{this._jobcenterUrl}{jobUrl}";
-
-                // need to go to each of the job and scraped its content
-                var jobDescription = await this.scrapeJobDescription(jobUrl);
-
-                // TODO: need some logic to handle adding company
-                Job job = new Job
-                {
-                    Title = name,
-                    Salary = salary,
-                    SalaryType = job_salary_types[salary_type.ToLower()],
-                    SalaryMin = Utils.ConvertKToThousand(salary_min),
-                    SalaryMax = Utils.ConvertKToThousand(salary_max),
-                    Location = location,
-                    Description = jobDescription,
-                    ProviderJobId = "",
-                };
-
+                // TODO: queue jobs and run in parallel
+                var job = await getJob(jobPosting, salaryTypes);
                 scrapedJobs.Add(job);
-
             }
 
             return scrapedJobs;
         }
 
+        private async Task<Job> getJob(HtmlNode jobPosting, IDictionary<string, SalaryType> salaryTypes)
+        {
+            var name = jobPosting.QuerySelector("h4").InnerText;
+            var companyName = jobPosting.QuerySelector("p a").InnerText;
+
+            var lis = jobPosting.QuerySelectorAll("ul li");
+
+            var salary = lis[0].InnerText;
+            // TODO: change to regex
+            var salary_array = salary.Split(' ');
+            var salary_type = salary_array[2]; // get the last array value
+            var salary_range_array = (salary_array[1]).Split("-"); // get the second last array value
+            var salary_min = salary_range_array[0];
+            var salary_max = salary_range_array[1];
+
+            var locationLi = lis[1];
+            var location = HttpUtility.HtmlDecode(locationLi.InnerText);
+
+            var jobUrl = jobPosting.QuerySelector(".jp_job_post_right_cont a").Attributes["href"].Value;
+
+            jobUrl = $"{this._jobcenterUrl}{jobUrl}";
+
+            // need to go to each of the job and scraped its content
+            var jobDescription = await this.scrapeJobDescription(jobUrl);
+
+            // TODO: need some logic to handle adding company
+            Job job = new Job
+            {
+                Title = name,
+                Salary = salary,
+                SalaryType = salaryTypes[salary_type.ToLower()],
+                SalaryMin = Utils.ConvertKToThousand(salary_min),
+                SalaryMax = Utils.ConvertKToThousand(salary_max),
+                Location = location,
+                Description = jobDescription,
+                ProviderJobId = "",
+            };
+
+            return job;
+        }
+
 
         private async Task<string> fetchWebsite(string url = null)
         {
+            // TODO: add retry logic
             using var httpClient = new HttpClient();
 
             if (String.IsNullOrWhiteSpace(url))
