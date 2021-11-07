@@ -1,8 +1,7 @@
 namespace Shared.Models
 {
-    public class Job
+    public class Job : BaseModel
     {
-        public long Id { get; set; }
         public long ProviderId { get; set; }
         public string ProviderJobId { get; set; }
         public long CompanyId { get; set; }

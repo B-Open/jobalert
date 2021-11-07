@@ -26,6 +26,7 @@ namespace Worker
             IConfiguration config = builder.Build();
 
             // set up database repositories
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
             using var conn = new MySqlConnection(config.GetConnectionString("Default"));
             await conn.OpenAsync();
             var transaction = conn.BeginTransaction();
