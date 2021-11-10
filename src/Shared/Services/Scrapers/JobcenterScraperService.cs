@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Ganss.XSS;
 
 namespace Shared.Services.Scrapers
 {
@@ -182,10 +183,14 @@ namespace Shared.Services.Scrapers
 
             // TODO: clean whitespaces and sanitise HTML
 
+            var sanitizer = new HtmlSanitizer();
+
+            var sanitizedJobDescription = sanitizer.Sanitize(jobDescription);
+
             // we can do above or
             // string jobDescription = jobDescriptionNode.InnerText;
 
-            return jobDescription;
+            return sanitizedJobDescription;
         }
     }
 }
