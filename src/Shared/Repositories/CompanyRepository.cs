@@ -29,9 +29,9 @@ namespace Shared.Repositories
         {
             var sql = @"
 INSERT INTO company
-  (name, provider_company_id)
+  (name, provider_id, provider_company_id)
 VALUES
-  (@name, @providercompanyid)";
+  (@name, @providerid, @providercompanyid)";
 
             await _conn.ExecuteAsync(sql, company, _trans);
         }
@@ -46,6 +46,15 @@ VALUES
             var sql = "SELECT * FROM company";
             var companies = (await _conn.QueryAsync<Company>(sql, null, _trans)).ToList();
             return companies;
+        }
+
+        public async Task<Company> GetByProviderCompanyId(long providerId, string providerCompanyId)
+        {
+            var sql = "SELECT * FROM company WHERE provider_id = @providerid AND provider_company_id = @providercompanyid";
+
+            var company = await _conn.QueryFirstOrDefaultAsync(sql, null);
+
+            return company; 
         }
     }
 }

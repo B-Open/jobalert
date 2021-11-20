@@ -8,6 +8,7 @@ namespace Shared.Repositories
     {
         Task<List<Company>> Get();
         Task<Company> Get(int id);
+        Task<Company> GetByProviderCompanyId(long providerId, string providerCompanyId);
         Task Insert(Company company);
         Task Insert(IEnumerable<Company> company);
     }

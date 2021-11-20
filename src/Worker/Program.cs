@@ -32,6 +32,7 @@ namespace Worker
 
             var jobRepository = new JobRepository(transaction);
             var companyRepository = new CompanyRepository(transaction);
+
             var jobService = new JobService(jobRepository, companyRepository);
 
             var scraper = new JobcenterScraperService();

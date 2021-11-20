@@ -31,10 +31,26 @@ namespace Shared.Services
             // insert jobs
             foreach (var job in jobs)
             {
+                // get the company object
+                var company = await _companyRepository.GetByProviderCompanyId(job.ProviderId, job.Company.ProviderCompanyId);
+
+                // if company object is null, insert company
+                if (company == null) {
+                    await _companyRepository.Insert(job.Company);
+
+                    // refetch the company
+                    company = await _companyRepository.GetByProviderCompanyId(job.ProviderId, job.Company.ProviderCompanyId);
+                }
+
+                // assign the company id to the job
+                job.CompanyId = company.Id;
+
+                // check if the job exists
+                if (await _jobRepository.JobExists(job.ProviderId, job.ProviderJobId, job.CompanyId)) continue;
+
+                // insert job
                 await _jobRepository.Insert(job);
             }
-
-            // TODO: insert companies if not exist
         }
     }
 }

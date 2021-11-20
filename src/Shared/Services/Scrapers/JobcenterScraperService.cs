@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Ganss.XSS;
+using Shared.Repositories;
 
 namespace Shared.Services.Scrapers
 {
@@ -18,6 +19,8 @@ namespace Shared.Services.Scrapers
 
         public string Keyword { get; set; }
         public string ProviderName { get { return "jobcenter"; } }
+
+        public long ProviderID { get { return 1; } }
 
         private string _jobcenterUrl = "https://jobcentrebrunei.gov.bn";
 
@@ -84,7 +87,9 @@ namespace Shared.Services.Scrapers
             {
                 Name = companyName,
                 ProviderCompanyId = GetProviderCompanyIdFromUrl(companyUrl),
+                ProviderId = ProviderID,
             };
+            
             var job = new Job
             {
                 Title = name,
@@ -94,6 +99,7 @@ namespace Shared.Services.Scrapers
                 SalaryMax = Utils.ParseNumber(salaryMax),
                 Location = location,
                 Description = jobDescription,
+                ProviderId = ProviderID,
                 ProviderJobId = GetProviderJobIdFromUrl(jobUrl),
                 Company = company,
             };

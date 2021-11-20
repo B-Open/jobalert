@@ -33,6 +33,15 @@ namespace Shared.Repositories
             return await _conn.QueryFirstAsync(sql, id); 
         }
 
+        public async Task<bool> JobExists(long providerId, string providerJobId, long companyId)
+        {
+            var sql = "SELECT * FROM job WHERE provider_id = @providerid AND id = @providerjobid AND company_id @companyid";
+
+            var job = await _conn.QueryFirstAsync(sql, providerJobId); 
+
+            return job != null;
+        }
+
         public async Task Insert(Job job)
         {
             var sql = @"
