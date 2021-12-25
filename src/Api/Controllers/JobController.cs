@@ -25,34 +25,10 @@ namespace Api.Controllers
             _jobRepository = jobRepository;
         }
 
-        [HttpGet("{search?}")]
-        public async Task<IEnumerable<Job>> Get(string search = null)
-        {
-            _logger.LogInformation("jobsearch API invoked");
-
-            ScraperServiceFactory factory = new ScraperServiceFactory();
-
-            //TODO: prevent re-instatiating scraper object every request
-            // factory.ScraperProvider = "dummy";
-            factory.ScraperProvider = "jobcenter";
-
-            IScraperService scraper = factory.Build();
-
-            if (search != null)
-            {
-                _logger.LogInformation($"Searched keyword {search}");
-                scraper.Keyword = search;
-            }
-
-            List<Job> scrapedJobs = await scraper.Scrape();
-
-            return scrapedJobs;
-        }
-
-        [HttpGet("demo")]
+        [HttpGet()]
         public async Task<IEnumerable<Job>> GetJobsAsync()
         {
-            _logger.LogInformation("company API invoked");
+            _logger.LogInformation("jobs API invoked");
 
             IEnumerable<Job> jobs;
             try
@@ -67,6 +43,26 @@ namespace Api.Controllers
             _transaction.Commit();
 
             return jobs;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<Job> GetJobByIdAsync(int id)
+        {
+            _logger.LogInformation("Job ID API invoked");
+
+            Job job;
+            try
+            {
+                job = await _jobRepository.Get(id);
+            }
+            catch
+            {
+                _transaction.Rollback();
+                throw;
+            }
+            _transaction.Commit();
+
+            return job;
         }
     }
 }

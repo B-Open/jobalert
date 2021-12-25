@@ -30,7 +30,7 @@ namespace Shared.Repositories
         {
             var sql = "SELECT * FROM job WHERE id = @id";
 
-            return await _conn.QueryFirstAsync(sql, id); 
+            return await _conn.QueryFirstAsync<Job>(sql, new {id}, _trans); 
         }
 
         public async Task Insert(Job job)
