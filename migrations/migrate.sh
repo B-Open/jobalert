@@ -17,7 +17,7 @@ fi
 
 if [ -z $DB_HOST ]
 then
-    DB_HOST='host.docker.internal'
+    DB_HOST=172.17.0.1
 fi
 
 if [ -z $DB_DATABASE ]
