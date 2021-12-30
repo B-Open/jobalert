@@ -27,14 +27,36 @@ namespace Shared.Services
                 throw new ArgumentNullException(nameof(jobs));
             }
 
-            // TODO: add logic to update if exist, insert if new
+            var companyMap = new Dictionary<string, Company>();
+
             // insert jobs
             foreach (var job in jobs)
             {
-                await _jobRepository.Insert(job);
+                // get existing
+                var oldJob = await _jobRepository.GetByProviderJobId(job.ProviderJobId);
+
+                // if not exist insert
+                if (oldJob != null)
+                {
+                    await _jobRepository.Update(job);
+                }
+                else
+                {
+                    await _jobRepository.Insert(job);
+                }
+
+                // add company id to hash map to be processed later
+                if (!companyMap.ContainsKey(job.Company.ProviderCompanyId))
+                {
+                    companyMap.Add(job.Company.ProviderCompanyId, job.Company);
+                }
             }
 
             // TODO: insert companies if not exist
+            foreach (var company in companyMap)
+            {
+
+            }
         }
     }
 }

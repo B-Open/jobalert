@@ -10,5 +10,7 @@ namespace Shared.Repositories
         Task<Job> Get(int id);
         Task Insert(Job job);
         Task Insert(IEnumerable<Job> jobs);
+        Task<Job> GetByProviderJobId(string providerJobId);
+        Task Update(Job job);
     }
 }

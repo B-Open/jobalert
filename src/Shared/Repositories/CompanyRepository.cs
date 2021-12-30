@@ -21,7 +21,7 @@ namespace Shared.Repositories
         public async Task<Company> Get(int id)
         {
             var sql = "SELECT * FROM company WHERE id = ?";
-            var company = (await _conn.QueryFirstOrDefaultAsync<Company>(sql, id, _trans));
+            var company = (await _conn.QueryFirstOrDefaultAsync<Company>(sql, new { id }, _trans));
             return company;
         }
 
