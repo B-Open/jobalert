@@ -1,12 +1,10 @@
 using Shared.Models;
-using Shared.Services.Scrapers;
 using Shared.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Data;
-using System;
 
 namespace Api.Controllers
 {
@@ -26,14 +24,14 @@ namespace Api.Controllers
         }
 
         [HttpGet()]
-        public async Task<IEnumerable<Job>> GetJobsAsync()
+        public async Task<IEnumerable<Job>> GetJobsAsync([FromQuery] string search)
         {
             _logger.LogInformation("jobs API invoked");
 
             IEnumerable<Job> jobs;
             try
             {
-                jobs = await _jobRepository.Get();
+                jobs = await _jobRepository.Get(search);
             }
             catch
             {

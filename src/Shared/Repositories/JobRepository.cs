@@ -19,10 +19,18 @@ namespace Shared.Repositories
             _conn = transaction.Connection;
         }
 
-        public async Task<List<Job>> Get()
+        public async Task<List<Job>> Get(string search)
         {
-            var sql = "SELECT * FROM job";
-            var jobs = (await _conn.QueryAsync<Job>(sql, null, _trans)).ToList();
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                search = "";
+            }
+
+            var sql = @"
+                SELECT * FROM job
+                WHERE
+                    (@search = '' OR MATCH(title, description) AGAINST (@search))";
+            var jobs = (await _conn.QueryAsync<Job>(sql, new { search }, _trans)).ToList();
             return jobs;
         }
 
