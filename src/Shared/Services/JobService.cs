@@ -44,6 +44,7 @@ namespace Shared.Services
                 {
                     await _jobRepository.Insert(job);
                 }
+                // TODO: delete jobs that does not exist
 
                 // add company id to hash map to be processed later
                 if (!companyMap.ContainsKey(job.Company.ProviderCompanyId))
@@ -52,10 +53,22 @@ namespace Shared.Services
                 }
             }
 
-            // TODO: insert companies if not exist
-            foreach (var company in companyMap)
+            foreach (var keyValue in companyMap)
             {
+                var company = keyValue.Value;
 
+                // check if company exist
+                var old = await _companyRepository.GetByProviderId(company.ProviderCompanyId);
+
+                if (old != null)
+                {
+                    old.Name = company.Name;
+                    await _companyRepository.Update(old);
+                }
+                else
+                {
+                    await _companyRepository.Insert(company);
+                }
             }
         }
     }

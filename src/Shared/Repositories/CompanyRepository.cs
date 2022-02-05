@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -29,16 +30,16 @@ namespace Shared.Repositories
         {
             var sql = @"
 INSERT INTO company
-  (name, provider_company_id)
+  (name, provider_company_id, provider_id)
 VALUES
-  (@name, @providercompanyid)";
+  (@name, @providercompanyid, @providerid)";
 
             await _conn.ExecuteAsync(sql, company, _trans);
         }
 
         public Task Insert(IEnumerable<Company> company)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<List<Company>> Get()
@@ -46,6 +47,25 @@ VALUES
             var sql = "SELECT * FROM company";
             var companies = (await _conn.QueryAsync<Company>(sql, null, _trans)).ToList();
             return companies;
+        }
+
+        public async Task<Company> GetByProviderId(string id)
+        {
+            var sql = "SELECT * FROM company WHERE provider_company_id = @id";
+
+            return await _conn.QueryFirstOrDefaultAsync<Company>(sql, new { id }, _trans);
+        }
+
+        public async Task Update(Company company)
+        {
+            var sql = @"
+            UPDATE company SET
+                name = @name,
+                provider_id = @providerid,
+                provider_company_id = @providercompanyid
+            WHERE id = @id";
+
+            await _conn.ExecuteAsync(sql, company, _trans);
         }
     }
 }

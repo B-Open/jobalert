@@ -139,6 +139,7 @@ namespace Shared.Services.Scrapers
         private async Task<string> fetchWebsite(string url = null)
         {
             // TODO: add retry logic
+            // TODO: implement paging
             using var httpClient = new HttpClient();
 
             if (String.IsNullOrWhiteSpace(url))
