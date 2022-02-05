@@ -36,9 +36,6 @@ namespace Worker
 
             var scraper = new JobcenterScraperService();
 
-            // setting the keyword  -- TODO: remove
-            scraper.Keyword = "programmer";
-
             List<Job> jobs = await scraper.Scrape();
 
             // save to database
