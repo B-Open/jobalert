@@ -23,6 +23,7 @@ services.AddScoped<IDbTransaction>((s) =>
 });
 services.AddScoped<IJobRepository, JobRepository>();
 services.AddScoped<ICompanyRepository, CompanyRepository>();
+services.AddScoped<IUserRepository, UserRepository>();
 
 services.AddControllers();
 services.AddSwaggerGen(c =>
